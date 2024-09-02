@@ -24,5 +24,5 @@ for i, image_url in enumerate(png_urls):
     with open(f'image_{i}.png', 'wb') as out_file:
         shutil.copyfileobj(image_response.raw, out_file)
 
-    print(f"Image {i} téléchargée avec succès. ")ls
+    print(f"Image {i} téléchargée avec succès. ")
     
