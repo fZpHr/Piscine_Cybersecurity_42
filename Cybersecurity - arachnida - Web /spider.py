@@ -5,12 +5,38 @@ import os
 import sys
 import argparse
 import traceback
+from urllib.parse import urljoin
 from colorama import init, Fore, Back, Style 
 
 init(autoreset=True)
 
+def check_extension(image_url, image_response, i, path):
+    extension = image_url.split('.')[-1]
+    valid_extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp', 'ico', 'tiff']
+    if extension in valid_extensions:
+        image_response.raise_for_status()
+        with open(f'{path}image_{i+1}.{extension}', 'wb') as out_file:
+            shutil.copyfileobj(image_response.raw, out_file)
+    else:
+        print(f"Extension non supportée: {extension}")
+
 def download_images(url, recursive, level, path):
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Referer': 'https://www.google.com/',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache',
+    }
+    response = requests.get(url, headers=headers)
     if response.status_code != 200:
         print(f"Erreur lors de la requête. {response} -> {url}")
         exit()
@@ -22,9 +48,9 @@ def download_images(url, recursive, level, path):
     image_urls = []
     already_downloaded = []
 
-    url = url.split('/')
-    if len(url) > 3:
-        url = '/'.join(url[:3])
+    base_url = get_base_url(url)
+    print(f"Base URL: {base_url}")
+    
     tags = soup.find_all(['img', 'link', 'meta', 'a'])
     for tag in tags:
         for attr in attributes:
@@ -32,35 +58,44 @@ def download_images(url, recursive, level, path):
                 image_urls.append(tag[attr])
                 break    
     for i, image_url in enumerate(image_urls):
+        if recursive and i == level:
+            break
         print(f"before - > {image_url}")
+        
         if not image_url.startswith(('http://', 'https://')):
-            image_url = url + image_url
-
-        print(f"after - > {image_url} \n\n")
-        image_response = requests.get(image_url, stream=True)
+            image_url = urljoin(base_url, image_url)
+        
+        print(f"after - > {image_url}")
+        image_response = requests.get(image_url, headers=headers, stream=True)
 
         if image_url in already_downloaded:
             print(f"Image {i+1} déjà téléchargée.")
             continue
         else:
-            if image_url.endswith('.png'):
-                with open(f'image_{i+1}.png', 'wb') as out_file:
-                    shutil.copyfileobj(image_response.raw, out_file)
-            elif image_url.endswith('.jpg'):
-                with open(f'image_{i+1}.jpg', 'wb') as out_file:
-                    shutil.copyfileobj(image_response.raw, out_file)
-            elif image_url.endswith('.jpeg'):
-                with open(f'image_{i+1}.jpeg', 'wb') as out_file:
-                    shutil.copyfileobj(image_response.raw, out_file)
-            elif image_url.endswith('.gif'):
-                with open(f'image_{i+1}.gif', 'wb') as out_file:
-                    shutil.copyfileobj(image_response.raw, out_file)
-            elif image_url.endswith('.bmp'):
-                with open(f'image_{i+1}.bmp', 'wb') as out_file:
-                    shutil.copyfileobj(image_response.raw, out_file)
-        already_downloaded.append(image_url)
+            try:
+                check_extension(image_url, image_response, i, path)
+                already_downloaded.append(image_url)
+            except Exception as e:
+                print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1}. {e}, try with other method {Back.RESET}\n")
+                try:
+                    save_url = urljoin("https:", image_url)
+                    if not save_url.startswith(('http://', 'https://')):
+                        save_url = url_begin + save_url
+                    print(f"after second method- > {save_url}")
+                    image_response = requests.get(save_url, headers=headers, stream=True)
+                    check_extension(save_url, image_response, i, path)
+                    already_downloaded.append(save_url)
+                    continue
+                except Exception as e:
+                    print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1}. {e} {Back.RESET}\n")
+                    continue
+        print(f"Image {i+1} téléchargée avec succès.\n\n")
 
-        print(f"Image {i} téléchargée avec succès. ")
+def get_base_url(url):
+    segments = url.split('/')
+    if len(segments) > 3:
+        return '/'.join(segments[:3]) + '/'
+    return url
 
 def main():
     parser = argparse.ArgumentParser(description='Spider script for downloading images.')
@@ -75,7 +110,7 @@ def main():
     if not args.url.startswith(('http://', 'https://')):
         print("Bad URL format. Please provide a valid URL.")
         exit()
-    
+        
     download_images(args.url, args.r, args.l, args.p)
 
 if __name__ == "__main__":
@@ -84,4 +119,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"{Back.RED}An error occurred: {e}, traceback below:")
         print(f"{Fore.RED}\t" + traceback.format_exc().replace("\n", f"\n\t{Fore.RED}"))
-        sys.exit(1)
