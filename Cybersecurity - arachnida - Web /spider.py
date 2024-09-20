@@ -78,17 +78,26 @@ def download_images(url, recursive, level, path):
             except Exception as e:
                 print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1}. {e}, try with other method {Back.RESET}\n")
                 try:
-                    save_url = urljoin("https:", image_url)
                     if not save_url.startswith(('http://', 'https://')):
-                        save_url = url_begin + save_url
+                        save_url = urljoin("https:", image_url)
                     print(f"after second method- > {save_url}")
                     image_response = requests.get(save_url, headers=headers, stream=True)
                     check_extension(save_url, image_response, i, path)
                     already_downloaded.append(save_url)
                     continue
                 except Exception as e:
-                    print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1}. {e} {Back.RESET}\n")
-                    continue
+                    print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1} avec https. {e}, try with http {Back.RESET}\n")
+                    try:
+                        if not save_url.startswith(('http://', 'https://')):
+                            save_url = urljoin("http:", image_url)
+                        print(f"after third method- > {save_url}")
+                        image_response = requests.get(save_url, headers=headers, stream=True)
+                        check_extension(save_url, image_response, i, path)
+                        already_downloaded.append(save_url)
+                        continue
+                    except Exception as e:
+                        print(f"{Back.RED} Erreur lors du téléchargement de l'image {i+1} avec http. {e} {Back.RESET}\n")
+                        continue
         print(f"Image {i+1} téléchargée avec succès.\n\n")
 
 def get_base_url(url):
@@ -110,6 +119,8 @@ def main():
     if not args.url.startswith(('http://', 'https://')):
         print("Bad URL format. Please provide a valid URL.")
         exit()
+    if not os.path.exists(args.p):
+        os.makedirs(args.p)
         
     download_images(args.url, args.r, args.l, args.p)
 
