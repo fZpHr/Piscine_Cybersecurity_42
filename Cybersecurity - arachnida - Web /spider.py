@@ -87,11 +87,11 @@ def handle_image_on_page(image_urls, base_url, path):
                         continue
         print(f"{Fore.GREEN} Image {number_of_images+1} téléchargée avec succès.")
 
-def download_images(url, level, path, visited_urls):
+def download_images(url, r, level, path, visited_urls):
     if level is not None and level == 0 or url in visited_urls:
         return
     print(f"{Fore.YELLOW}\n\nSur le level: {level}")
-    print(f"{Back.BLUE}Url: {url}")
+    print(f"{Fore.BLUE}Url: {url}")
     visited_urls.add(url)
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
@@ -114,30 +114,42 @@ def download_images(url, level, path, visited_urls):
                 recursive_urls.append(urljoin(base_url, tag[attr]))
 
     handle_image_on_page(image_urls, base_url, path)
-    for recursive_url in recursive_urls:
-        if recursive_url is url or not recursive_url.startswith(base_url):
-            continue
-        else:
-            download_images(recursive_url, None if level is None else level - 1, path, visited_urls)
+    if r:
+        for recursive_url in recursive_urls:
+            if recursive_url is url or not recursive_url.startswith(base_url):
+                continue
+            else:
+                print(f"{Fore.YELLOW}   - Chemin : {recursive_url}......")
+                download_images(recursive_url, r, None if level is None else level - 1, path, visited_urls)
     
 
 def main():
+    url = None
+    for arg in sys.argv[1:]:
+        if arg.startswith(('http://', 'https://')):
+            url = arg
+            break
+
+    if url is None:
+        print("URL is required. Please provide a valid URL.")
+        exit()
+
+    args_without_url = [arg for arg in sys.argv[1:] if arg != url]
+
     parser = argparse.ArgumentParser(description='Spider script for downloading images.')
-
     parser.add_argument('-r', action='store_true', help='Recursively download images')
-    parser.add_argument('-l', nargs='?', const=5, help='Maximum depth level for recursive download')
+    parser.add_argument('-l', nargs='?', const=5, type=int, help='Maximum depth level for recursive download (default: 5)')
     parser.add_argument('-p', type=str, default='./data/', help='Path where downloaded files will be saved')
-    parser.add_argument('url', type=str, help='The URL to download images from')
+    args = parser.parse_args(args_without_url)
 
-    args = parser.parse_args()
-
-    if not args.url.startswith(('http://', 'https://')):
+    print(f"{Fore.YELLOW}Downloading images from {url}, level: {args.l}...")
+    if not url.startswith(('http://', 'https://')):
         print("Bad URL format. Please provide a valid URL.")
         exit()
     if not os.path.exists(args.p):
         os.makedirs(args.p)
         
-    download_images(args.url, args.l, args.p, set())
+    download_images(url, args.r, args.l, args.p, set())
 
 if __name__ == "__main__":
     try:
