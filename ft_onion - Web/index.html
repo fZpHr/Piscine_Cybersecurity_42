@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Vrai DarkNet™ - Offres Louches et Garanties de Confiance*</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e6e6e6;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #ff4c4c;
+            text-shadow: 1px 1px 5px #000;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+        }
+        .offer {
+            border: 2px solid #ff4c4c;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #333333;
+            color: #ffd700;
+            border-radius: 10px;
+        }
+        .button1, .button2, .button3, .button4 {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #ff4c4c;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #000;
+        }
+        .button1:hover, .button2:hover, .button3:hover, .button4:hover {
+            background-color: #ffd700;
+            color: #1a1a1a;
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .modal-option {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #ff4c4c;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .modal-option:hover {
+            background-color: #ffd700;
+            color: #1a1a1a;
+        }
+
+        .modal-close {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #ff4c4c;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .modal-close:hover {
+            background-color: #ff4c4c;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Bienvenue sur Le Vrai DarkNet™</h1>
+        <h2>Le royaume des opportunités, si vous savez où regarder...</h2>
+        
+        <p>
+            Entrez dans un monde d'offres ultra-exclusives où **tout** est possible. Pas de questions posées, pas de limites.
+
+        <div class="offer">
+            <h2>💼 **Vente d'Armements de Tout Type** 💼</h2>
+            <p>
+                Que vous soyez à la recherche d'un simple pistolet ou d'une arme lourde, nous avons ce qu'il vous faut! 
+                De la **mitrailleuse à la grenade**, tout est livré dans une **boîte discrète** et accompagnée d'un **mode d'emploi flou**. 
+                C'est le genre de chose qu'on ne trouve pas sur Amazon, c'est pourquoi vous êtes ici.
+            </p>
+            <a href="#" class="button1">Achetez maintenant, pas de questions posées !</a>
+        </div>
+
+        <div class="offer">
+            <h2>💊 **Vente de Drogues (100% "Pure" et "Légales" dans 5 pays non précisés)** 💊</h2>
+            <p>
+                Besoin d'un petit coup de pouce pour votre soirée? Nos **produits** sont garantis à **100%** (d’aucune légalité). 
+                Choisissez parmi nos **offres irrésistibles** et profitez d'une expérience que vous regretterez probablement demain.
+            </p>
+            <a href="#" class="button2">Commandez vos substances maintenant !</a>
+        </div>
+
+        <div class="offer">
+            <h2>💰 **Hackez Votre Voisin et Gagnez des Millions!** 💰</h2>
+            <p>
+                Marre de faire vos courses? Pourquoi ne pas **pirater un compte bancaire** et obtenir l'argent que vous méritez. 
+                Nos services de **"hacking" faciles à utiliser** vous permettent de devenir riche en quelques clics (presque). 
+                Résultats non garantis, mais une **aventure palpitante**!
+            </p>
+            <a href="#" class="button3">Je veux pirater tout !</a>
+        </div>
+
+        <div class="offer">
+            <h2>🔞 **Recrutez une personne pour résoudre vos soucis** 🔞</h2>
+            <p>
+                Besoin de régler un problème? Nos **services de recrutement** vous permettent de trouver la personne idéale pour **résoudre vos soucis**.
+            </p>
+            <a href="#" class="button4">Trouvez votre solution maintenant !</a>
+        </div>  
+
+        <p>* Pas de garantie de fonctionnement. Ne tentez pas cela chez vous. C'est une blague, ou peut-être pas...?</p>
+    </div>
+
+    <footer>
+        <p>© 2024 Le Vrai DarkNet™. Tous droits réservés. Toute ressemblance avec des services réels est purement fortuite. Nous ne garantissons rien.</p>
+    </footer>
+    
+    <script>
+        const buttons1 = document.querySelectorAll('.button1');
+        const buttons2 = document.querySelectorAll('.button2');
+        const buttons3 = document.querySelectorAll('.button3');
+        const buttons4 = document.querySelectorAll('.button4');
+
+        function showProductSelection(productType) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.backgroundColor = '#333';
+            modal.style.padding = '20px';
+            modal.style.border = '2px solid #ff4c4c';
+            modal.style.borderRadius = '10px';
+            modal.style.zIndex = '1000';
+            modal.style.color = '#ffd700';
+            modal.innerHTML = `
+            <h2>Sélectionnez votre ${productType}</h2>
+            <button class="modal-option">${productType} 1</button>
+            <button class="modal-option">${productType} 2</button>
+            <button class="modal-option">${productType} 3</button>
+            <button class="modal-close">Fermer</button>
+            `;
+            document.body.appendChild(modal);
+
+            const closeModal = () => {
+            document.body.removeChild(modal);
+            };
+
+            modal.querySelector('.modal-close').addEventListener('click', closeModal);
+            modal.querySelectorAll('.modal-option').forEach((button, index) => {
+            button.addEventListener('click', () => {
+                alert(`Merci pour votre achat: ${productType} ${index + 1}. Félicitations!`);
+                closeModal();
+            });
+            });
+        }
+
+        buttons1.forEach(button => {
+            button.addEventListener('click', () => {
+            showProductSelection('pistolet');
+            });
+        });
+        buttons2.forEach(button => {
+            button.addEventListener('click', () => {
+            showProductSelection('drogue');
+            });
+        });
+        buttons3.forEach(button => {
+            button.addEventListener('click', () => {
+            showProductSelection('compte bancaire à pirater');
+            });
+        });
+        buttons4.forEach(button => {
+            button.addEventListener('click', () => {
+            showProductSelection('personne pour résoudre vos soucis');
+            });
+        });
+
+    </script>
+</body>
+</html>
+
