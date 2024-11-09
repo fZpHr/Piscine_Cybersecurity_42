@@ -1,114 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-void nice(const char* message) {
-    puts(message);
-}
-
-void try(const char* message) {
-    puts(message);
-}
-
-void but(const char* message) {
-    puts(message);
-}
-
-void this(const char* message) {
-    puts(message);
-}
-
-void it(const char* message) {
-    puts(message);
-}
-
-void not(const char* message) {
-    puts(message);
-}
-
-void that(const char* message) {
-    puts(message);
-}
-
-void easy(const char* message) {
-    puts(message);
-}
-
-void ___syscall_malloc(const char* message) {
-    puts(message);
+void no() {
+    printf("Nope.\n");
     exit(1);
 }
 
-void ____syscall_malloc(const char* message) {
-    puts(message);
+void ok() {
+    printf("Good job.\n");
+    exit(0);
 }
 
-int main(int argc, char* argv[]) {
-    char input[64];
-    char output[9] = "*";
-    int result;
+int main(int argc, const char **argv, const char **envp) {
+    char v3; // al
+    size_t v5; // [esp+10h] [ebp-48h]
+    bool v6; // [esp+17h] [ebp-41h]
+    char nptr[4]; // [esp+1Fh] [ebp-39h] BYREF
+    char v8[24]; // [esp+23h] [ebp-35h] BYREF
+    char v9[23]; // [esp+24h] [ebp-34h]
+    char s[9]; // [esp+3Bh] [ebp-1Dh] BYREF
+    size_t v11; // [esp+44h] [ebp-14h]
+    int i; // [esp+48h] [ebp-10h]
+    int v13; // [esp+4Ch] [ebp-Ch]
+    int v14; // [esp+50h] [ebp-8h]
 
-    if (scanf("%63s", input) != 1) {
-        ___syscall_malloc("Input error");
+    v14 = 0;
+    printf("Please enter key: ");
+    v13 = scanf("%23s", v8);
+    if (v13 != 1)
+        no();
+    
+    if (v8[0] != '4')
+        no();
+    if (v8[1] != '2')
+        no();
+    fflush(stdin);
+    memset(s, 0, sizeof(s));
+    s[0] = '*';
+    nptr[3] = 0;
+    v11 = 3;
+    for (i = 1;; ++i) {
+        v6 = 0;
+        if (strlen(s) < 8) {
+            v5 = v11;
+            v6 = v5 < strlen(v8);
+        }
+        if (!v6)
+            break;
+        nptr[0] = v8[v11 - 1];
+        nptr[1] = v8[v11];
+        nptr[2] = v8[v11 + 1];
+        v3 = atoi(nptr);
+        s[i] = v3;
+        v11 += 3;
     }
-
-    if (input[1] != '2') {
-        ___syscall_malloc("Invalid input");
-    }
-
-    if (input[0] != '4') {
-        ___syscall_malloc("Invalid input");
-    }
-
-    fflush(stdout);
-
-    size_t input_len = strlen(input);
-    size_t output_index = 1;
-    size_t input_index = 2;
-
-    while (output_index < 8 && input_index < input_len) {
-        char num[4] = {0};
-        strncpy(num, input + input_index, 3);
-        output[output_index++] = (char)atoi(num);
-        input_index += 3;
-    }
-
-    output[output_index] = '\0';
-
-    result = strcmp(output, "");
-
-    switch (result) {
-        case -2:
-            nice(output);
-            break;
-        case -1:
-            try(output);
-            break;
-        case 0:
-            but(output);
-            break;
-        case 1:
-            this(output);
-            break;
-        case 2:
-            it(output);
-            break;
-        case 3:
-            not(output);
-            break;
-        case 4:
-            that(output);
-            break;
-        case 5:
-            easy(output);
-            break;
-        case 115:
-            ____syscall_malloc(output);
-            break;
-        default:
-            ___syscall_malloc("Invalid result");
-            break;
-    }
-
+    s[i] = 0;
+    if (strcmp(s,"********"))
+        no();
+    ok();
     return 0;
 }
