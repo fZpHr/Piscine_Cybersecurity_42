@@ -11,11 +11,11 @@ Collection of projects from the 42 School Cybersecurity Piscine. Each project ex
 
 - [x] ft_otp - OTP 🔑
   - TOTP generator
-  - RFC 6238 implementation
+  - RFC 4226 implementation
 
 - [x] ft_onion - Web 🧅
   - Tor hidden service
-  - Nginx & SSL setup
+  - Nginx setup
 
 - [x] Reverse me - Rev 🔄
   - Binary analysis
