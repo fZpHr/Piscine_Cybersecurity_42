@@ -1,0 +1,44 @@
+services:
+  inquisitor:
+    container_name: inquisitor
+    build:
+      context: ./inquisitor
+      dockerfile: Dockerfile
+    privileged: true
+    volumes:
+      - ./inquisitor/inquisitor.py:/inquisitor.py
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      inquisitor:
+        ipv4_address: 172.20.0.2
+  ftp:
+    container_name: ftp
+    build:
+      context: ./ftp
+      dockerfile: Dockerfile
+    networks:
+      inquisitor:
+        ipv4_address: 172.20.0.3
+
+  victim:
+    container_name: victim
+    build:
+      context: ./victim
+      dockerfile: Dockerfile
+    networks:
+        inquisitor:
+          ipv4_address: 172.20.0.4
+
+networks:
+  inquisitor:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+      options:
+        com.docker.network.driver.name : br_inquisitor
+        com.docker.network.bridge.enable_icc : "true"
+        com.docker.network.bridge.enable_ip_masquerade : "true"
