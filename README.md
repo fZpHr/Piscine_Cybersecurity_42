@@ -29,7 +29,7 @@ Collection of projects from the 42 School Cybersecurity Piscine. Each project ex
   - Anti-ransomware
   - System protection
 
-- [ ] Inquisitor - Network 🌐
+- [x] Inquisitor - Network 🌐
   - Traffic analysis
   - Network monitoring
 

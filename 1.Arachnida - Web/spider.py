@@ -136,10 +136,11 @@ def main():
 
     args_without_url = [arg for arg in sys.argv[1:] if arg != url]
 
-    parser = argparse.ArgumentParser(description='Spider script for downloading images.')
-    parser.add_argument('-r', action='store_true', help='Recursively download images')
-    parser.add_argument('-l', nargs='?', const=5, type=int, help='Maximum depth level for recursive download (default: 5)')
-    parser.add_argument('-p', type=str, default='./data/', help='Path where downloaded files will be saved')
+    parser = argparse.ArgumentParser(prog="Arachnida - Web Spider 🕷️",description="Web spider script for downloading images from websites 🌐",epilog="Developed by: https://github.com/fZpHr/ 👨‍💻")
+    parser.add_argument("--version", "-v", required=False, action="store_true", help="Show version of the spider 📝")
+    parser.add_argument("--recursive", "-r", action="store_true", help="Recursively download images 🔄")
+    parser.add_argument("--level", "-l", nargs='?', const=5, type=int, help="Maximum depth level for recursive download (default: 5) 📏")
+    parser.add_argument("--path", "-p", type=str, default='./data/', help="Path where downloaded files will be saved 🗂️")
     args = parser.parse_args(args_without_url)
 
     print(f"{Fore.YELLOW}Downloading images from {url}, level: {args.l}...")
