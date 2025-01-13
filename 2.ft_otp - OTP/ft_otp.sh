@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# This script is used to generate a new key, encrypt it and generate a new temporary key with the HOTP algorithm.
-
 DEBUG=${DEBUG:-0} 
 RED='\033[0;31m'
 BLUE='\033[0;34m'
@@ -15,13 +13,26 @@ debug_print() {
     fi
 }
 
-is_hex() {
-    value=$1
-    if [[ ${value} =~ ^[0-9a-fA-F]{64}$ ]]; then
+check_extension() {
+    local filename="$1"
+    local extension="$2"
+    
+    if [[ "$filename" == *.$extension ]]; then
         return 0
     else
         return 1
     fi
+}
+
+is_hex() {
+    if ! [[ "$1" == *."hex" ]]; then
+        return 1;
+    fi
+    value=$(cat "$1" | tr -d '\n')
+    if [ ${#value} -lt 64 ] || ! [[ $value =~ ^[0-9a-fA-F]+$ ]]; then
+        return 1
+    fi
+    return 0
 }
 
 is_crypted() {
@@ -44,7 +55,7 @@ generate_key() {
     fi
 
     key_content="$1"
-    if ! is_hex "$key_content"; then
+    if is_hex "$key_content"; then
         echo -n "$key_content" | openssl enc -aes-256-cbc -pbkdf2 -salt -out ft_otp.key -pass pass:${encrypt_key}
         printf "${GREEN}Key stored securely in ft_otp.key${NC}\n"
     else
@@ -81,34 +92,40 @@ generate_otp() {
 
     key_file=$(openssl enc -aes-256-cbc -pbkdf2 -d -in "$1" -pass pass:${encrypt_key} | tr -d '\n')
     key=$(cat $key_file | tr -d '\n')
+    debug_print "Key used: $key"
+    debug_print "Key length: ${#key}"
     
     if [ -z "$key" ]; then
         printf "${RED}Failed to decrypt the key${NC}\n"
         exit 1
     fi
-    if ! is_hex "$key"; then
+    if is_hex "$key"; then
         printf "${RED}Decrypted key is not in hex format${NC}\n"
         exit 1
     fi
 
-    count_file=$(mktemp)
-    if [ ! -s "$count_file" ]; then
-        echo 0 > "$count_file"
-    fi
+    # # HOTP algorithm (RFC 4226) : https://tools.ietf.org/html/rfc4226 (page 6) | ./ft_otp.sh -g test.hex && DEBUG=1 ./ft_otp.sh -k ft_otp.key && oathtool --totp --verbose $(cat test.hex) 
+    # count_file="hotp_counter"
+    # if [ ! -f "$count_file" ]; then
+    #     echo 0 > "$count_file"
+    # fi
 
-    # HOTP algorithm (RFC 4226) : https://tools.ietf.org/html/rfc4226 (page 6)
+    # count=$(cat "$count_file")
+    # ((count++))
+    # echo $count > "$count_file"
 
-    count=$(cat "$count_file")
-    ((count++))
-    echo $count > "$count_file"
     debug_print "Counter value for HOTP algo: $count"
-    count=$((count + $(date +%M)))
+    time_step=30
+    count+=$(( $(date +%s) / $time_step ))
+    debug_print "Current Unix time: $count"
+    debug_print "Step size: $time_step"
+    debug_print "T value: $count"
     debug_print "Counter value after adding minutes TOTP logic: $count"
     
     hex_count=$(printf "%016x" $count)
     debug_print "Format counter value in hex for HMAC-SHA1: $hex_count"
-
-    hmac=$(echo -n "$hex_count" | openssl dgst -sha1 -mac HMAC -macopt hexkey:$key | sed 's/^.* //')
+    
+    hmac=$(printf "%016x" $count | xxd -r -p | openssl dgst -sha1 -mac HMAC -macopt hexkey:$key | sed 's/^.* //')
     debug_print "HMAC-SHA1 (key + counter): $hmac"
 
     offset=$((0x${hmac: -1} & 0xf))
