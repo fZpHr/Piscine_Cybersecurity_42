@@ -1,22 +1,15 @@
 import sys
 import os
-from PIL import Image
-import exifread
-import traceback
 from colorama import Fore, Back, Style, init
+import traceback
+import exiftool
 
 def display_metadata(file_path):
-    try:
-        with open(file_path, 'rb') as f:
-            tags = exifread.process_file(f)
-        
-        print(f"{Fore.GREEN}File: {file_path}")
-        print(f"{Fore.GREEN}Size: {os.path.getsize(file_path)} bytes")
-        
-        for tag in tags.keys():
-            print(f"{Fore.YELLOW}{tag}: {tags[tag]}")
-    except Exception as e:
-        print(f"{Back.RED}Error processing {file_path}: {e}")
+    with exiftool.ExifToolHelper() as et:
+        metadata = et.get_metadata(file_path)
+        for d in metadata:
+            for key, value in d.items():
+                print(f"{key}: {value}")
 
 def main():
     if len(sys.argv) < 2:
