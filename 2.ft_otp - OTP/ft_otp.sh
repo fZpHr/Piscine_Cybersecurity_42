@@ -132,9 +132,21 @@ generate_otp() {
         #  offset*2         ^position 18
         # 4 octet a partir de l'offeset : f8ac12e0
         # application de l'opération logique sur chaque octet :
+            # f8 = 11111000  
+            # 7f = 01111111  
+            # f8 & 7f = 01111000 (hex = 78)
             #    f8 & 0x7f = 78  << 24 = 78000000
+            # ac = 10101100  
+            # ff = 11111111  
+            # ac & ff = 10101100 (hex = ac)
             #    Deuxième : ac & 0xff = ac  << 16 = 00ac0000
+            # 12 = 00010010  
+            # ff = 11111111  
+            # 12 & ff = 00010010 (hex = 12)
             #    Troisième: 12 & 0xff = 12  << 8  = 00001200
+            # e0 = 11100000  
+            # ff = 11111111  
+            # e0 & ff = 11100000 (hex = e0)
             #    Quatrième: e0 & 0xff = e0        = 000000e0
         # combinaison avec | (OR) : 78000000 | 00ac0000 | 00001200 | 000000e0 = 78ac12e0 -> 2024460000 % 1000000 = 460000
     bin_code=$(( ((0x${hmac:$((offset*2)):2} & 0x7f) << 24 ) | \
