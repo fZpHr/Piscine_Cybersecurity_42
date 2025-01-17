@@ -128,8 +128,8 @@ generate_otp() {
 
     #exemple : 
         #offset 9
-               # bccb3f81b1611ca8c7f8ac12e0727c65078805e9
-        #  offset*2       ^position 18
+        # bccb3f81b1611ca8c7f8ac12e0727c65078805e9
+        #  offset*2         ^position 18
         # 4 octet a partir de l'offeset : f8ac12e0
         # application de l'opération logique sur chaque octet :
             #    f8 & 0x7f = 78  << 24 = 78000000
