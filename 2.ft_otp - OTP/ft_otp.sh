@@ -13,17 +13,6 @@ debug_print() {
     fi
 }
 
-check_extension() {
-    local filename="$1"
-    local extension="$2"
-    
-    if [[ "$filename" == *.$extension ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 is_hex() {
     if ! [[ "$1" == *."hex" ]]; then
         return 1;
@@ -137,6 +126,17 @@ generate_otp() {
     debug_print "  Third byte:  0x${hmac:$((offset*2+4)):2} & 0xff"
     debug_print "  Fourth byte: 0x${hmac:$((offset*2+6)):2} & 0xff"
 
+    #exemple : 
+        #offset 9
+               # bccb3f81b1611ca8c7f8ac12e0727c65078805e9
+        #  offset*2       ^position 18
+        # 4 octet a partir de l'offeset : f8ac12e0
+        # application de l'opération logique sur chaque octet :
+            #    f8 & 0x7f = 78  << 24 = 78000000
+            #    Deuxième : ac & 0xff = ac  << 16 = 00ac0000
+            #    Troisième: 12 & 0xff = 12  << 8  = 00001200
+            #    Quatrième: e0 & 0xff = e0        = 000000e0
+        # combinaison avec | (OR) : 78000000 | 00ac0000 | 00001200 | 000000e0 = 78ac12e0 -> 2024460000 % 1000000 = 460000
     bin_code=$(( ((0x${hmac:$((offset*2)):2} & 0x7f) << 24 ) | \
                 ((0x${hmac:$((offset*2+2)):2} & 0xff) << 16 ) | \
                 ((0x${hmac:$((offset*2+4)):2} & 0xff) << 8 ) | \
