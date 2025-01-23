@@ -9,7 +9,7 @@ all:
 	@echo "|_|  \__|___\___/|_| |_|_|\___/|_| |_|"
 	@echo "       |_____|                        "
 	@docker build -t $(IMAGE_NAME) .
-	@docker run -d -p 8042:80 -p 4242:4242 --name $(CONTAINER_NAME) $(IMAGE_NAME)
+	@docker run -d -p 80:80 -p 4242:4242 --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
 stop:
 	-@docker stop $(CONTAINER_NAME)

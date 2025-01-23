@@ -28,37 +28,40 @@ int main(int argc, const char **argv, const char **envp) {
 
     v14 = 0;
     printf("Please enter key: ");
-    v13 = scanf("%23s", v8);
+    v13 = scanf("%23s", v8); // Lire une chaîne de caractères de l'utilisateur
     if (v13 != 1)
-        no();
+        no(); // Si la lecture échoue, appeler la fonction no()
     
     if (v8[0] != '4')
-        no();
+        no(); // Vérifier si le premier caractère est '4', sinon appeler no()
     if (v8[1] != '2')
-        no();
-    fflush(stdin);
-    memset(s, 0, sizeof(s));
-    s[0] = '*';
-    nptr[3] = 0;
-    v11 = 3;
+        no(); // Vérifier si le deuxième caractère est '2', sinon appeler no()
+    fflush(stdin); // Vider le buffer d'entrée
+    memset(s, 0, sizeof(s)); // Initialiser la chaîne s avec des zéros
+    s[0] = '*'; // Mettre '*' comme premier caractère de s
+    nptr[3] = 0; // Terminer nptr avec un caractère nul
+    v11 = 3; // Initialiser v11 à 3
     for (i = 1;; ++i) {
         v6 = 0;
-        if (strlen(s) < 8) {
+        if (strlen(s) < 8) { // Vérifier si la longueur de s est inférieure à 8
             v5 = v11;
-            v6 = v5 < strlen(v8);
+            v6 = v5 < strlen(v8); // Vérifier si v11 est inférieur à la longueur de v8
         }
         if (!v6)
-            break;
-        nptr[0] = v8[v11 - 1];
-        nptr[1] = v8[v11];
-        nptr[2] = v8[v11 + 1];
-        v3 = atoi(nptr);
-        s[i] = v3;
-        v11 += 3;
+            break; // Sortir de la boucle si v6 est faux
+        nptr[0] = v8[v11 - 1]; // Copier le caractère précédent dans nptr[0] v8[42042042042042042042042]
+                                                                //                ^
+        nptr[1] = v8[v11]; // Copier le caractère actuel dans nptr[1]       v8[42042042042042042042042]
+                                                                //                ^
+        nptr[2] = v8[v11 + 1]; // Copier le caractère suivant dans nptr[2]  v8[42042042042042042042042]
+                                                                //                 ^
+        v3 = atoi(nptr); // Convertir nptr en entier
+        s[i] = v3; // Mettre l'entier converti dans s
+        v11 += 3; // Incrémenter v11 de 3
     }
-    s[i] = 0;
+    s[i] = 0; // Terminer s avec un caractère nul
     if (strcmp(s,"********"))
-        no();
-    ok();
+        no(); // Comparer s avec "********", si différent appeler no()
+    ok(); // Si tout est correct, appeler ok()
     return 0;
 }
